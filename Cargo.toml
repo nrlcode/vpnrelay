@@ -1,0 +1,18 @@
+[package]
+name = "vpnrelay"
+version = "0.2.0"
+edition = "2021"
+description = "Carry gluetun's VPN UDP past rootless Docker's user-space network"
+rust-version = "1.80"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/nrlcode/vpnrelay"
+readme = "README.md"
+
+[dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

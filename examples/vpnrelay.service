@@ -1,0 +1,15 @@
+# systemd user unit: ~/.config/systemd/user/vpnrelay.service, then `systemctl --user enable --now vpnrelay`.
+# Not tied to docker.service: if something else starts dockerd (for example a cron watchdog), the relay still follows
+# it. It exits when Docker's RootlessKit child changes or goes away, and systemd starts it again in the new namespace.
+[Unit]
+Description=vpnrelay: gluetun VPN UDP on br-vpn past rootless Docker's user-space network
+After=docker.service
+
+[Service]
+ExecStart=/usr/local/bin/vpnrelay transparent br-vpn 51820,1637,58237,1194
+ExecStopPost=/usr/local/bin/vpnrelay cleanup br-vpn 51820,1637,58237,1194
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

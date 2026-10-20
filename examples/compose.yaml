@@ -1,0 +1,20 @@
+# gluetun + a client on the relay's network. Create the network once:
+#   docker network create vpnrelay -o com.docker.network.bridge.name=br-vpn
+# then run `vpnrelay supervise br-vpn 51820` (cron or examples/vpnrelay.service).
+services:
+  gluetun:
+    image: qmcgaw/gluetun:v3.40.0
+    cap_add: [NET_ADMIN]
+    devices: [/dev/net/tun:/dev/net/tun]
+    environment:
+      VPN_SERVICE_PROVIDER: mullvad
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}   # from .env, never commit it
+      WIREGUARD_ADDRESSES: ${WIREGUARD_ADDRESSES}
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    network_mode: service:gluetun
+networks:
+  default:
+    name: vpnrelay
+    external: true
